@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,21 +19,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.example.notesappassignment.AddNoteDialog
-import com.example.notesappassignment.NoteList
-import com.example.notesappassignment.data.samplenotes
-import com.example.notesappassignment.model.Note
+import com.example.notesappassignment.viewmodel.noteviewmodel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteApp() {
-    var notes by remember { mutableStateOf(samplenotes.toMutableStateList()) }
-    var showdialog by remember { mutableStateOf(false) }
+fun NoteApp(viewModel: noteviewmodel ) {
+    val notes by viewModel.notes.collectAsState()
+//    var showdialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { showdialog = true }) {
+            FloatingActionButton(onClick = { viewModel.opendialog() }) {
                 Icon(Icons.Default.Add, contentDescription = "Add Note")
             }
         },
@@ -47,15 +45,12 @@ fun NoteApp() {
             modifier = Modifier.padding(paddingValues)
         )
 
-        if(showdialog){
+        if(viewModel.showdialog){
             AddNoteDialog(
                 onAdd = {title,description ->
-                    if(title.isNotBlank() && description.isNotBlank()){
-                        notes.add(Note(title,description))
-                        showdialog = false
-                }
+                    viewModel.addNote(title,description)
                 },
-                onDismiss = {showdialog = false}
+                onDismiss = {viewModel.dismissDialog()}
             )
         }
     }

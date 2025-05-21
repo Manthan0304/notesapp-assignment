@@ -1,4 +1,4 @@
-package com.example.notesappassignment
+package com.example.notesappassignment.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
